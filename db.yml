@@ -1,0 +1,19 @@
+- name: Database
+  hosts: db
+  sudo: true
+  tasks:
+    - name: Start etcd
+      service: name=etcd.service state=started
+
+    - name: Install docker-py
+      pip: name=docker-py
+
+    - name: pull container
+      raw: docker pull orchardup/postgresql
+
+    - name: launch postgresql container
+      docker:
+        image="orchardup/postgresql"
+        name="example-db"
+        ports="5432:5432"
+        state=running
