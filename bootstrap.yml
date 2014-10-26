@@ -2,3 +2,14 @@
   gather_facts: False
   roles:
     - defunctzombie.coreos-bootstrap
+  tasks:
+    - name: Install docker-py
+      pip: name=docker-py
+    # - name: pull registry container
+      # raw: docker pull registry
+    # - name: launch registry container
+      # docker:
+        # image="registry"
+        # name="docker-registry"
+        # ports="5000:5000"
+        # state=running

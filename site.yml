@@ -1,5 +1,6 @@
 ---
   - include: bootstrap.yml
+  - include: ruby.yml
   - include: web.yml
   - include: db.yml
   - include: app.yml

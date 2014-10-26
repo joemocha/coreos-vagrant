@@ -1,19 +1,40 @@
 - name: Database
-  hosts: db
+  hosts: coreos
   sudo: true
   tasks:
-    - name: Start etcd
-      service: name=etcd.service state=started
+    - name: build data container
+      docker_image: path="/home/core/share/data" name="joemocha/data" state=present
+    - name: launch data container
+      docker:
+        image: joemocha/data
+        name: pgdata
+        state: running
+        volumes: /var/lib/postgresql
+        command: echo "Postgresql Data Container"
 
-    - name: Install docker-py
-      pip: name=docker-py
+    - name: pull memcached container
+      raw: docker pull tutum/memcached
+    - name: launch memcached container
+      docker:
+        image: tutum/memcached
+        name:  memcached-server
+        env: MEMCACHED_PASS={{ lookup('password', '/tmp/memcached chars=ascii_letters,digits,hexdigits length=24') }}
+        state: running
 
-    - name: pull container
+    - name: pull redis container
+      raw: docker pull redis
+    - name: launch redis container
+      docker:
+        image: redis
+        name:  redis-server
+        state: running
+
+    - name: pull postgresql container
       raw: docker pull orchardup/postgresql
-
     - name: launch postgresql container
       docker:
-        image="orchardup/postgresql"
-        name="example-db"
-        ports="5432:5432"
-        state=running
+        image: orchardup/postgresql
+        name: db
+        volumes_from: pgdata
+        env: POSTGRESQL_USER=atp,POSTGRESQL_DB=atp,POSTGRESQL_PASS={{ lookup('password', '/tmp/pgpass chars=ascii_letters,digits,hexdigits length=24') }}
+        state: running

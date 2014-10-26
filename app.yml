@@ -1,19 +1,16 @@
 - name: Application
-  hosts: app
+  hosts: coreos
   sudo: true
   tasks:
-    - name: Start etcd
-      service: name=etcd.service state=started
-
-    - name: Install docker-py
-      pip: name=docker-py
-
-    - name: pull container
-      raw: docker pull google/nodejs-hello
-
-    - name: launch nodeJS container
+    - name: build api container
+      docker_image: path="/home/core/share/api" name="joemocha/api" state=present
+    - name: Run api container
       docker:
-        image="google/nodejs-hello"
-        name="hellowowrld-nodejs"
-        ports="8080:8080"
-        state=running
+        image: joemocha/api
+        name: "{{ item }}"
+        links:
+          - redis-server:redis
+          - db:db
+          - memcached-server:memcached-server
+        state: running
+      with_sequence: start=0 end=1 format=api%02x

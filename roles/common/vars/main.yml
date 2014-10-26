@@ -1,0 +1,12 @@
+---
+api_server_count: 2
+api_servers:
+  - api1
+  - api2
+web_servers:
+  - web1
+  - web2
+api_web_links:
+  "api{{ item }}:web{{ item }}"
+with_sequence: start=1 end=api_server_count format=x
+

@@ -1,0 +1,6 @@
+- name: Ruby
+  hosts: coreos
+  sudo: true
+  tasks:
+    - name: build ruby containers
+      raw: "cd /home/core/share/ruby && ./bin/docker/build.sh"
