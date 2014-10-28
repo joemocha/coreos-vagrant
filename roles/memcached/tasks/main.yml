@@ -3,7 +3,7 @@
   raw: docker pull tutum/memcached
 
 - name: Create memcached.service file
-  template: src=memcached.service.j2 dest=/etc/systemd/system/memcached.service owner=root
+  template: src=memcached.service.j2 dest=/etc/systemd/system/memcached@.service owner=root
 
 - name: Start Memcached Service
   service: name=memcached state=started enabled=yes

@@ -3,7 +3,7 @@
   raw: docker pull orchardup/postgresql
 
 - name: Create postgresql.service file
-  template: src=postgresql.service.j2 dest=/etc/systemd/system/postgresql.service owner=root
+  template: src=postgresql.service.j2 dest=/etc/systemd/system/postgresql@.service owner=root
 
 - name: Start postgresql service
   service: name=postgresql state=started enabled=yes

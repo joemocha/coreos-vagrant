@@ -1,7 +1,9 @@
 ---
 - name: Build api container
   docker_image: path="/home/core/share/api" name="joemocha/api" state=present
+
 - name: Create api.service file
-  template: src=api.service.j2 dest=/etc/systemd/system/api.service owner=root
+  template: src=api.service.j2 dest=/etc/systemd/system/api@.service owner=root
+
 - name: Start API Service
   service: name=api state=started enabled=yes
