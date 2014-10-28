@@ -1,11 +1,16 @@
 ---
+- name: launch data container
+  docker:
+    image: joemocha/data
+    name: pgdata
+    state: present
+    volumes: /var/lib/postgresql
+    command: echo "Postgresql Data Container"
+
 - name: Pull postgresql container
   raw: docker pull orchardup/postgresql
 
 - name: Create postgresql.service file
   template: src=postgresql.service.j2 dest=/etc/systemd/system/postgresql@.service owner=root
-
-- name: Start postgresql service
-  service: name=postgresql state=started enabled=yes
   notify:
-    - Start cluster services
+    - Submit cluster services

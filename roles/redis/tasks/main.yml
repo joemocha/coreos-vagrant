@@ -1,7 +1,8 @@
 ---
 - name: Pull redis container
   raw: docker pull redis
-- name: Create redis.service file
+
+- name: Create redis service
   template: src=redis.service.j2 dest=/etc/systemd/system/redis@.service owner=root
-- name: Redis service state
-  service: name=redis state=started enabled=yes
+  notify:
+    - Submit cluster services

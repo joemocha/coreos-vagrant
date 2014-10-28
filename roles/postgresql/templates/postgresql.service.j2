@@ -12,7 +12,7 @@ TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill db
 ExecStartPre=-/usr/bin/docker rm db
 ExecStartPre=-/usr/bin/etcdctl setdir /postgresql
-ExecStart=/usr/bin/docker run --name=db \
+ExecStart=/usr/bin/docker run --rm --name=db \
   --volumes-from pgdata \
   -e POSTGRESQL_USER=${POSTGRESQL_USER} \
   -e POSTGRESQL_DB=${POSTGRESQL_DB} \
@@ -24,3 +24,6 @@ ExecStopPost=/usr/bin/etcdctl rm /postgresql/password
 
 [Install]
 WantedBy=multi-user.target
+
+[X-Fleet]
+Conflicts=postgresql@*.service

@@ -1,0 +1,15 @@
+- name: Services
+  hosts: leader
+  sudo: true
+  tasks:
+    - name: Start Redis
+      raw: fleetctl start redis@6379.service
+
+    - name: Start Postgresql
+      raw: fleetctl start postgresql@54321.service
+
+    - name: Start Memcached
+      raw: fleetctl start memcached@11211.service
+
+    - name: Start API
+      raw: fleetctl start api@80.service api-discovery@80.service

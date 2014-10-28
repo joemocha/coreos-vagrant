@@ -4,11 +4,13 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill redis-server
 ExecStartPre=-/usr/bin/docker rm redis-server
-ExecStart=/usr/bin/docker run --name redis-server redis
+ExecStart=/usr/bin/docker run --rm --name redis-server redis
 ExecStop=/usr/bin/docker stop redis-server
 
 [Install]
 WantedBy=multi-user.target
+
+[X-Fleet]
+Conflicts=redis@*.service

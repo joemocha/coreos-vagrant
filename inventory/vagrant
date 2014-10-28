@@ -1,7 +1,12 @@
 ## inventory file for vagrant machines
 core-01 ansible_ssh_host=172.12.8.101
+# core-02 ansible_ssh_host=172.12.8.102
 
 [coreos]
+core-01
+# core-02
+
+[leader]
 core-01
 
 [coreos:vars]

@@ -1,4 +1,4 @@
 ---
-- name: Start cluster services
-  raw: fleetctl start /etc/systemd/system/*.service
+- name: Submit cluster services
+  raw: fleetctl submit /etc/systemd/system/*.service
 
