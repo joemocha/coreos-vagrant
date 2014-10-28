@@ -1,0 +1,19 @@
+[Unit]
+Description=haproxy
+After=docker.service
+After=api.service
+Requires=docker.service
+Requires=api.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill web
+ExecStartPre=-/usr/bin/docker rm web
+ExecStart=/usr/bin/docker run --name web \
+  -p 8080:80 \
+ --link api1:web1 \
+  tutum/haproxy
+ExecStop=-/usr/bin/docker stop web
+
+[Install]
+WantedBy=multi-user.target

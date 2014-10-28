@@ -1,6 +1,6 @@
 - name: Web
   hosts: coreos
   sudo: true
-  tasks:
-    - name: pull haproxy container
-      raw: docker pull tutum/haproxy
+  roles:
+    - common
+    - haproxy

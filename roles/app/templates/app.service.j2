@@ -1,0 +1,27 @@
+[Unit]
+Description=app
+After=etcd.service
+After=docker.service
+After=postgresql.service
+After=memcached.service
+After=redis.service
+Requires=docker.service
+Requires=postgresql.service
+Requires=memcached.service
+Requires=redis.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill app1
+ExecStartPre=-/usr/bin/docker rm app1
+ExecStart=/usr/bin/docker run \
+  --link redis-server:redis \
+  --link db:db \
+  --link memcached-server:memcached-server \
+  --name app1 \
+  joemocha/app
+ExecStop=/usr/bin/docker stop app1
+
+[Install]
+WantedBy=multi-user.target
+

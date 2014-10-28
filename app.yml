@@ -1,16 +1,7 @@
 - name: Application
   hosts: coreos
   sudo: true
-  tasks:
-    - name: build api container
-      docker_image: path="/home/core/share/api" name="joemocha/api" state=present
-    - name: Run api container
-      docker:
-        image: joemocha/api
-        name: "{{ item }}"
-        links:
-          - redis-server:redis
-          - db:db
-          - memcached-server:memcached-server
-        state: running
-      with_sequence: start=0 end=1 format=api%02x
+  roles:
+    - common
+    - api
+    - app

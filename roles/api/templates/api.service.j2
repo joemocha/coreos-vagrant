@@ -1,0 +1,27 @@
+[Unit]
+Description=api
+After=etcd.service
+After=docker.service
+After=postgresql.service
+After=memcached.service
+After=redis.service
+Requires=docker.service
+Requires=postgresql.service
+Requires=memcached.service
+Requires=redis.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill api1
+ExecStartPre=-/usr/bin/docker rm api1
+ExecStart=/usr/bin/docker run \
+  --link redis-server:redis \
+  --link db:db \
+  --link memcached-server:memcached-server \
+  --name api1 \
+  joemocha/api
+ExecStop=/usr/bin/docker stop api1
+
+[Install]
+WantedBy=multi-user.target
+

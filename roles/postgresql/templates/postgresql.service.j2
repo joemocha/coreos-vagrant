@@ -1,0 +1,26 @@
+[Unit]
+Description=postgresql
+After=etcd.service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Environment="POSTGRESQL_PASS={{ lookup('password', '/tmp/postgresql chars=ascii_letters,digits,hexdigits length=24') }}" \
+  "POSTGRESQL_DB=atp" \
+  "POSTGRESQL_USER=atp"
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill db
+ExecStartPre=-/usr/bin/docker rm db
+ExecStartPre=-/usr/bin/etcdctl setdir /postgresql
+ExecStart=/usr/bin/docker run --name=db \
+  --volumes-from pgdata \
+  -e POSTGRESQL_USER=${POSTGRESQL_USER} \
+  -e POSTGRESQL_DB=${POSTGRESQL_DB} \
+  -e POSTGRESQL_PASS=${POSTGRESQL_PASS} \
+  orchardup/postgresql
+ExecStartPost=/usr/bin/etcdctl set /postgresql/password ${POSTGRESQL_PASS}
+ExecStop=/usr/bin/docker stop db
+ExecStopPost=/usr/bin/etcdctl rm /postgresql/password
+
+[Install]
+WantedBy=multi-user.target

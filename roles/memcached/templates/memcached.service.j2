@@ -1,0 +1,18 @@
+[Unit]
+Description=memcached
+After=etcd.service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Environment="MEMCACHED_PASS={{ lookup('password', '/tmp/memcached chars=ascii_letters,digits,hexdigits length=24') }}"
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill memcached-server
+ExecStartPre=-/usr/bin/docker rm memcached-server
+ExecStart=/usr/bin/docker run -e MEMCACHED_PASS=${MEMCACHED_PASS} --name memcached-server tutum/memcached
+ExecStartPost=/usr/bin/etcdctl set /memcached-password ${MEMCACHED_PASS}
+ExecStop=/usr/bin/docker stop memcached-server
+ExecStopPost=/usr/bin/etcdctl rm /memcached-password
+
+[Install]
+WantedBy=multi-user.target
