@@ -1,11 +1,25 @@
 [Unit]
-Description=Announce API@%i service
+Description=Announce API@%i service to etcd registration
+Requires=etcd.service
+Requires=api@%i.service
 BindsTo=api@%i.service
+After=etcd.service
+After=api@%i.service
 
 [Service]
 EnvironmentFile=/etc/environment
-ExecStart=/bin/sh -c "while true; do etcdctl set /announce/services/api%i ${COREOS_PUBLIC_IPV4}:%i --ttl 60; sleep 45; done"
-ExecStop=/usr/bin/etcdctl rm /announce/services/api%i
+ExecStart=/bin/bash -c '\
+  while true; do \
+    curl -f ${COREOS_PRIVATE_IPV4}:%i/status; \
+    if [ $? -eq 0 ]; then \
+      etcdctl set /services/api/${COREOS_PRIVATE_IPV4} \'${COREOS_PRIVATE_IPV4}:%i\' --ttl 30; \
+    else \
+      etcdctl rm /services/api/${COREOS_PRIVATE_IPV4}; \
+    fi; \
+    sleep 20; \
+  done'
+ExecStop=/usr/bin/etcdctl rm /services/api/${COREOS_PRIVATE_IPV4}
 
 [X-Fleet]
 X-ConditionMachineOf=api@%i.service
+
