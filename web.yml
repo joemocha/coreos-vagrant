@@ -1,6 +1,6 @@
-- name: Web
+- name: Load Balancer
   hosts: coreos
   sudo: true
   roles:
     - common
-    - haproxy
+    - nginx

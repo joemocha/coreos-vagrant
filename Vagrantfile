@@ -89,7 +89,7 @@ Vagrant.configure("2") do |config|
       config.vm.network :private_network, ip: ip
 
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
-      %W{ api app data db ruby}.each do |name|
+      %W{ api app data db ruby nginx }.each do |name|
         config.vm.synced_folder "../#{name}", "/home/core/share/#{name}", id: "core-#{name}", :nfs => true, :mount_options => ['nolock,vers=3,udp']
       end
 

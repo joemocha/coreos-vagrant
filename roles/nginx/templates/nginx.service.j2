@@ -1,0 +1,26 @@
+[Unit]
+Description=Nginx load balancer for web server backends
+
+# Requirements
+Requires=etcd.service
+Requires=docker.service
+
+# Dependency ordering
+After=etcd.service
+After=docker.service
+
+[Service]
+# Let the process take awhile to start up (for first run Docker containers)
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker kill load_balancer
+ExecStart=/usr/bin/docker run --rm --name load_balancer \
+  -p ${COREOS_PUBLIC_IPV4}:80:80 \
+  joemocha/load_balancer
+ExecStop=/usr/bin/docker stop load_balancer
+
+[X-Fleet]
+X-Conflicts=nginx.service
+# X-Conflicts=api@*.service
+# X-Conflicts=app@*.service
