@@ -1,0 +1,12 @@
+- name: Reset server services
+  hosts: all
+  sudo: true
+  roles:
+    - common
+  tasks:
+    - name: Destroy service templates
+      raw: fleetctl destroy {{ services | join(' ') }} {{ service_templates | join(' ') }}
+    # - name: Delete service files
+      # raw: rm {{ service_path }}/{{ item }}*.service
+      # ignore_errors: True
+      # with_items: file_prefixs

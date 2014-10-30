@@ -3,7 +3,10 @@
   raw: cd share/nginx && docker build -t joemocha/load_balancer .
 
 - name: Create nginx.service file
-  template: src=nginx.service.j2 dest=/etc/systemd/system/nginx.service owner=root
-  notify:
-    - Submit cluster services
+  template: src=nginx.service.j2 dest={{ service_path }}/nginx.service owner=root
 
+- name: Create nginx discovery unit
+  template: src=nginx-discovery.service.j2 dest={{ service_path }}/nginx-discovery.service owner=root
+
+- name: Submit nginx services
+  raw: fleetctl submit {{ service_path }}/nginx.service {{ service_path }}/nginx-discovery.service

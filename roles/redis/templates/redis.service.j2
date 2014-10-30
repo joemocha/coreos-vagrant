@@ -2,11 +2,18 @@
 Description=redis
 After=docker.service
 Requires=docker.service
+Before=redis-discovery@%i.service
 
 [Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=0
+KillMode=none
 ExecStartPre=-/usr/bin/docker kill redis-server
 ExecStartPre=-/usr/bin/docker rm redis-server
-ExecStart=/usr/bin/docker run --rm --name redis-server redis
+ExecStart=/usr/bin/docker run --rm \
+  --name redis-server \
+  -p ${COREOS_PRIVATE_IPV4}:%i:6379 \
+  redis
 ExecStop=/usr/bin/docker stop redis-server
 
 [Install]

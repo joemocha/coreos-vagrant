@@ -1,0 +1,25 @@
+[Unit]
+Description=Announce Memcached@%i service to etcd registration
+Requires=etcd.service
+Requires=memcached@%i.service
+BindsTo=memcached@%i.service
+After=etcd.service
+After=memcached@%i.service
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStart=/bin/bash -c '\
+  while true; do \
+    curl -f ${COREOS_PRIVATE_IPV4}:%i/status; \
+    if [ $? -eq 0 ]; then \
+      etcdctl set /services/memcached/${COREOS_PRIVATE_IPV4} \'${COREOS_PRIVATE_IPV4}:%i\' --ttl 30; \
+    else \
+      etcdctl rm /services/memcached/${COREOS_PRIVATE_IPV4}; \
+    fi; \
+    sleep 20; \
+  done'
+ExecStop=/usr/bin/etcdctl rm /services/memcached/${COREOS_PRIVATE_IPV4}
+
+[X-Fleet]
+X-ConditionMachineOf=memcached@%i.service
+

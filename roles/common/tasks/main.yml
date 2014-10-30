@@ -1,3 +1,5 @@
 ---
+- name: create service directory
+  command: mkdir -p {{ service_path }}
 - name: build data container
   docker_image: path="/home/core/share/data" name="joemocha/data" state=present

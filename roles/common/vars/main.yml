@@ -1,12 +1,33 @@
 ---
-api_server_count: 2
-api_servers:
-  - api1
-  - api2
-web_servers:
-  - web1
-  - web2
-api_web_links:
-  "api{{ item }}:web{{ item }}"
-with_sequence: start=1 end=api_server_count format=x
-
+service_path: /tmp/services
+service_templates:
+  - redis@
+  - redis-discovery@
+  - memcached@
+  - memcached-discovery@
+  - postgresql@
+  - postgresql-discovery@
+  - app@
+  - app-discovery@
+  - api@
+  - api-discovery@
+services:
+  - redis@6379
+  - redis-discovery@6379
+  - memcached@11211
+  - memcached-discovery@11211
+  - postgresql@5432
+  - postgresql-discovery@5432
+  - app@80
+  - app-discovery@80
+  - api@80
+  - api-discovery@80
+  - nginx
+  - nginx-discovery
+file_prefixs:
+  - redis
+  - postgresql
+  - memcached
+  - app
+  - api
+  - nginx

@@ -1,5 +1,5 @@
 - name: Load Balancer
-  hosts: coreos
+  hosts: load_balancers
   sudo: true
   roles:
     - common

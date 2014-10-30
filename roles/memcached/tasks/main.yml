@@ -2,7 +2,11 @@
 - name: Pull memcached container
   raw: docker pull tutum/memcached
 
-- name: Create memcached.service file
-  template: src=memcached.service.j2 dest=/etc/systemd/system/memcached@.service owner=root
-  notify: 
-    - Submit cluster services
+- name: Create memcached.service unit
+  template: src=memcached.service.j2 dest={{ service_path }}/memcached@.service owner=root
+
+- name: Create memcached discovery unit
+  template: src=memcached-discovery.service.j2 dest={{ service_path }}/memcached-discovery@.service owner=root
+
+- name: Submit memcached services
+  raw: fleetctl submit {{ service_path }}/memcached@.service {{ service_path }}/memcached-discovery@.service

@@ -11,6 +11,10 @@
   raw: docker pull orchardup/postgresql
 
 - name: Create postgresql.service file
-  template: src=postgresql.service.j2 dest=/etc/systemd/system/postgresql@.service owner=root
-  notify:
-    - Submit cluster services
+  template: src=postgresql.service.j2 dest={{ service_path }}/postgresql@.service owner=root
+
+- name: Create postgresql discovery unit
+  template: src=postgresql-discovery.service.j2 dest={{ service_path }}/postgresql-discovery@.service owner=root
+
+- name: Submit postgresql services
+  raw: fleetctl submit {{ service_path }}/postgresql@.service {{ service_path }}/postgresql-discovery@.service

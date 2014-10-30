@@ -11,7 +11,10 @@ Environment="POSTGRESQL_PASS={{ lookup('password', '/tmp/postgresql chars=ascii_
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill db
 ExecStartPre=-/usr/bin/docker rm db
-ExecStartPre=-/usr/bin/etcdctl setdir /postgresql
+ExecStartPre=-/usr/bin/docker run --name pgdata \
+  -v /var/lib/postgresql \
+  joemocha/data \
+  echo "Postgresql Data Container"
 ExecStart=/usr/bin/docker run --rm --name=db \
   --volumes-from pgdata \
   -e POSTGRESQL_USER=${POSTGRESQL_USER} \
@@ -26,4 +29,5 @@ ExecStopPost=/usr/bin/etcdctl rm /postgresql/password
 WantedBy=multi-user.target
 
 [X-Fleet]
-Conflicts=postgresql@*.service
+Conflicts=nginx.service
+# Conflicts=postgresql@*.service

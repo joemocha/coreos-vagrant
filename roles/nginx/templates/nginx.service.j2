@@ -22,5 +22,5 @@ ExecStop=/usr/bin/docker stop load_balancer
 
 [X-Fleet]
 X-Conflicts=nginx.service
-# X-Conflicts=api@*.service
-# X-Conflicts=app@*.service
+X-Conflicts=api@*.service
+X-Conflicts=app@*.service

@@ -1,5 +1,5 @@
 - name: Ruby
-  hosts: coreos
+  hosts: servers
   sudo: true
   tasks:
     - name: build ruby containers

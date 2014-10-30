@@ -3,6 +3,7 @@
   raw: docker pull tutum/haproxy
 
 - name: Create haproxy service file
-  template: src=haproxy.service.j2 dest=/etc/systemd/system/haproxy@.service owner=root
-  notify:
-    - Submit cluster services
+  template: src=haproxy.service.j2 dest={{ service_path }}/haproxy@.service owner=root
+
+- name: Submit haproxy services
+  raw: fleetctl submit {{ service_path }}/haproxy@.service

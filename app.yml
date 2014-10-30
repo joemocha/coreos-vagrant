@@ -1,5 +1,5 @@
 - name: Application
-  hosts: coreos
+  hosts: servers
   sudo: true
   roles:
     - common
