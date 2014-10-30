@@ -10,7 +10,7 @@ After=redis@%i.service
 EnvironmentFile=/etc/environment
 ExecStart=/bin/bash -c '\
   while true; do \
-    curl -f ${COREOS_PRIVATE_IPV4}:%i/status; \
+    /usr/bin/docker exec -it redis-server redis-cli ping; \
     if [ $? -eq 0 ]; then \
       etcdctl set /services/redis/${COREOS_PRIVATE_IPV4} \'${COREOS_PRIVATE_IPV4}:%i\' --ttl 30; \
     else \

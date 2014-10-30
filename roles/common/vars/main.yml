@@ -7,8 +7,6 @@ service_templates:
   - memcached-discovery@
   - postgresql@
   - postgresql-discovery@
-  - app@
-  - app-discovery@
   - api@
   - api-discovery@
 services:
@@ -18,8 +16,6 @@ services:
   - memcached-discovery@11211
   - postgresql@5432
   - postgresql-discovery@5432
-  - app@80
-  - app-discovery@80
   - api@80
   - api-discovery@80
   - nginx

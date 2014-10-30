@@ -11,6 +11,7 @@ ExecStartPre=-/usr/bin/docker kill memcached-server
 ExecStartPre=-/usr/bin/docker rm memcached-server
 ExecStart=/usr/bin/docker run --rm \
   -e MEMCACHED_PASS=${MEMCACHED_PASS} \
+  -p ${COREOS_PRIVATE_IPV4}:11211:11211 \
   --name memcached-server \
   tutum/memcached
 ExecStartPost=/usr/bin/etcdctl set /memcached-password ${MEMCACHED_PASS}
