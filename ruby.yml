@@ -1,5 +1,5 @@
 - name: Ruby
-  hosts: servers
+  hosts: all
   sudo: true
   tasks:
     - name: build ruby containers

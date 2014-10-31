@@ -1,5 +1,5 @@
 - name: Load Balancer
-  hosts: load_balancers
+  hosts: all
   sudo: true
   roles:
     - common

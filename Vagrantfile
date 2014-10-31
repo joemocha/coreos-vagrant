@@ -49,7 +49,7 @@ Vagrant.configure("2") do |config|
 
   (1..$num_instances).each do |i|
     config.vm.define vm_name = "core-%02d" % i do |config|
-      config.vm.hostname = vm_name
+      config.vm.hostname = vm_name + ".dev"
 
       if $enable_serial_logging
         logdir = File.join(File.dirname(__FILE__), "log")

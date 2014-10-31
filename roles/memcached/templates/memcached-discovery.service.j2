@@ -8,13 +8,16 @@ After=memcached@%i.service
 
 [Service]
 EnvironmentFile=/etc/environment
+Environment="MEMCACHED_PASS={{ lookup('password', '/tmp/memcached chars=ascii_letters,digits,hexdigits length=24') }}"
 ExecStart=/bin/bash -c '\
   while true; do \
     /usr/bin/docker exec memcached-server ps aux | grep memcached; \
     if [ $? -eq 0 ]; then \
       etcdctl set /services/memcached/${COREOS_PRIVATE_IPV4} \'${COREOS_PRIVATE_IPV4}:%i\' --ttl 30; \
+      etcdctl set /settings/api/MEMCACHE_SERVERS \'memcached://admin:${MEMCACHED_PASS}@${COREOS_PRIVATE_IPV4}:%i\' --ttl 30; \
     else \
       etcdctl rm /services/memcached/${COREOS_PRIVATE_IPV4}; \
+      etcdctl rm /settings/api/MEMCACHE_SERVERS; \
     fi; \
     sleep 20; \
   done'

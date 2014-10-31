@@ -1,7 +1,7 @@
 - name: Application
-  hosts: servers
+  hosts: all
   sudo: true
   roles:
     - common
     - api
-    - app
+    # - app

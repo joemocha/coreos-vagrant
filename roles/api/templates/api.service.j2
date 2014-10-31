@@ -19,10 +19,8 @@ KillMode=none
 ExecStartPre=-/usr/bin/docker kill api.%i
 ExecStartPre=-/usr/bin/docker rm api.%i
 ExecStart=/usr/bin/docker run --rm \
-  -p ${COREOS_PRIVATE_IPV4}:%i:80 \
-  --link redis-server:redis \
-  --link db:db \
-  --link memcached-server:memcached-server \
+  -e HOST_IP=${COREOS_PRIVATE_IPV4} \
+  -p ${COREOS_PRIVATE_IPV4}:%i:8080 \
   --name api.%i \
   joemocha/api
 ExecStop=/usr/bin/docker stop api.%i

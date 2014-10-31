@@ -16,12 +16,14 @@ ExecStart=/bin/bash -c '\
     /usr/bin/docker exec -it db /usr/bin/psql -U ${POSTGRESQL_USER} ${POSTGRESQL_DB} -c \'select 1\'; \
     if [ $? -eq 0 ]; then \
       etcdctl set /services/postgresql/${COREOS_PRIVATE_IPV4} \'${COREOS_PRIVATE_IPV4}:%i\' --ttl 30; \
+      etcdctl set /settings/api/DATABASE_URL \'postgres://${POSTGRESQL_USER}:${POSTGRESQL_PASS}@${COREOS_PRIVATE_IPV4}:%i/${POSTGRESQL_DB}\' --ttl 30; \
     else \
       etcdctl rm /services/postgresql/${COREOS_PRIVATE_IPV4}; \
+      etcdctl rm /settings/api/DATABASE_URL; \
     fi; \
     sleep 20; \
   done'
-ExecStop=/usr/bin/etcdctl rm /services/postgresql/${COREOS_PRIVATE_IPV4}
+ExecStop=/usr/bin/etcdctl rm /services/postgresql/${COREOS_PRIVATE_IPV4}; etcdctl rm /settings/api/DATABASE_URL;
 
 [X-Fleet]
 X-ConditionMachineOf=postgresql@%i.service

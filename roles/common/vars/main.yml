@@ -16,7 +16,7 @@ services:
   - memcached-discovery@11211
   - postgresql@5432
   - postgresql-discovery@5432
-  - api@80
-  - api-discovery@80
+  - api@8080
+  - api-discovery@8080
   - nginx
   - nginx-discovery

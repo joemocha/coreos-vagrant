@@ -14,11 +14,13 @@ After=docker.service
 TimeoutStartSec=0
 KillMode=none
 EnvironmentFile=/etc/environment
-ExecStartPre=-/usr/bin/docker kill load_balancer
-ExecStart=/usr/bin/docker run --rm --name load_balancer \
+ExecStartPre=-/usr/bin/docker kill lb
+ExecStart=/usr/bin/docker run --rm \
+  --name lb \
+  -e HOST_IP=${COREOS_PRIVATE_IPV4} \
   -p ${COREOS_PUBLIC_IPV4}:80:80 \
   joemocha/load_balancer
-ExecStop=/usr/bin/docker stop load_balancer
+ExecStop=/usr/bin/docker stop lb
 
 [X-Fleet]
 X-Conflicts=nginx.service

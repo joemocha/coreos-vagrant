@@ -4,5 +4,7 @@
   roles:
     - common
   tasks:
-    - name: Destroy service templates
-      raw: fleetctl destroy {{ services | join(' ') }} {{ service_templates | join(' ') }}
+    - name: Destroy service units
+      raw: fleetctl destroy {{ services | join(' ') }}
+    - name: Destroy service template units
+      raw: fleetctl destroy {{ service_templates | join(' ') }}
