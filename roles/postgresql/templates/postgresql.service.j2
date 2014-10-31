@@ -20,6 +20,7 @@ ExecStart=/usr/bin/docker run --rm --name=db \
   -e POSTGRESQL_USER=${POSTGRESQL_USER} \
   -e POSTGRESQL_DB=${POSTGRESQL_DB} \
   -e POSTGRESQL_PASS=${POSTGRESQL_PASS} \
+  -p 5432:5432 \
   orchardup/postgresql
 ExecStartPost=/usr/bin/etcdctl set /postgresql/password ${POSTGRESQL_PASS}
 ExecStop=/usr/bin/docker stop db
