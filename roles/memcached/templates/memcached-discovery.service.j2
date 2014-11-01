@@ -14,10 +14,10 @@ ExecStart=/bin/bash -c '\
     /usr/bin/docker exec memcached-server ps aux | grep memcached; \
     if [ $? -eq 0 ]; then \
       etcdctl set /services/memcached/${COREOS_PRIVATE_IPV4} \'${COREOS_PRIVATE_IPV4}:%i\' --ttl 30; \
-      etcdctl set /settings/api/MEMCACHE_SERVERS \'memcached://admin:${MEMCACHED_PASS}@${COREOS_PRIVATE_IPV4}:%i\' --ttl 30; \
+      etcdctl set /settings/MEMCACHE_SERVERS \'memcached://admin:${MEMCACHED_PASS}@${COREOS_PRIVATE_IPV4}:%i\' --ttl 30; \
     else \
       etcdctl rm /services/memcached/${COREOS_PRIVATE_IPV4}; \
-      etcdctl rm /settings/api/MEMCACHE_SERVERS; \
+      etcdctl rm /settings/MEMCACHE_SERVERS; \
     fi; \
     sleep 20; \
   done'
