@@ -4,4 +4,4 @@
   roles:
     - common
     - api
-    # - app
+    - app
