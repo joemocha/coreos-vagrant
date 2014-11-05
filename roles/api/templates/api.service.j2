@@ -1,16 +1,10 @@
 [Unit]
 Description=API running on Port %i
 Requires=docker.service
-Requires=postgresql@*.service
-Requires=memcached@*.service
-Requires=redis@*.service
 
 Before=api-discovery@%i.service
 After=etcd.service
 After=docker.service
-After=postgresql@*.service
-After=memcached@*.service
-After=redis@*.service
 
 [Service]
 EnvironmentFile=/etc/environment
@@ -29,6 +23,4 @@ ExecStop=/usr/bin/docker stop api.%i
 WantedBy=multi-user.target
 
 [X-Fleet]
-Conflicts=api@*.service
-Conflicts=app@*.service
-Conflicts=nginx.service
+Global=true

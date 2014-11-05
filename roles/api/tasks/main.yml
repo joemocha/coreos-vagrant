@@ -1,6 +1,9 @@
 ---
 - name: Build api container
-  docker_image: path="/home/core/share/api" name="joemocha/api" state=present
+  docker_image:
+    path="/home/core/share/api"
+    name="joemocha/api"
+    state=present
 
 - name: Create api discovery service
   template: src=api-discovery.service.j2 dest={{ service_path }}/api-discovery@.service owner=root

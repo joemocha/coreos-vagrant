@@ -1,12 +1,12 @@
 ---
-- name: Pull redis container
+- name: Pull Redis image
   raw: docker pull redis
 
-- name: Create redis service
-  template: src=redis.service.j2 dest={{ service_path }}/redis@.service owner=root
+- name: Redis running?
+  raw: "docker ps | grep redis"
+  ignore_errors: True
+  register: redis_is_running
 
-- name: Create redis discovery service
-  template: src=redis-discovery.service.j2 dest={{ service_path }}/redis-discovery@.service owner=root
-
-- name: Submit redis services
-  raw: fleetctl submit {{ service_path }}/redis@.service {{ service_path }}/redis-discovery@.service
+- name: Start Redis
+  raw: docker run -d --name redis -p 6379:6379 redis
+  when: redis_is_running|failed

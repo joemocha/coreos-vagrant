@@ -1,6 +1,5 @@
 - name: Database
-  hosts: servers
-  sudo: true
+  hosts: localhost
   roles:
     - common
     - memcached

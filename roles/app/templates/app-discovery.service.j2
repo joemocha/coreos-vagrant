@@ -1,0 +1,25 @@
+[Unit]
+Description=Announce APP@%i service to etcd registration
+Requires=etcd.service
+Requires=app@%i.service
+BindsTo=app@%i.service
+After=etcd.service
+After=app@%i.service
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStart=/bin/bash -c '\
+  while true; do \
+    curl -f ${COREOS_PRIVATE_IPV4}:%i/robots.txt; \
+    if [ $? -eq 0 ]; then \
+      etcdctl set /services/app/${COREOS_PRIVATE_IPV4} \'${COREOS_PRIVATE_IPV4}:%i\' --ttl 30; \
+    else \
+      etcdctl rm /services/app/${COREOS_PRIVATE_IPV4}; \
+    fi; \
+    sleep 20; \
+  done'
+ExecStop=/usr/bin/etcdctl rm /services/app/${COREOS_PRIVATE_IPV4}
+
+[X-Fleet]
+Global=true
+

@@ -1,26 +1,16 @@
 ## inventory file for vagrant machines
+# aws     ansible_ssh_host=127.0.0.1  ansible_ssh_user=docker  ansible_ssh_port=2022 # elb.aws
 core-01 ansible_ssh_host=172.12.8.101
 core-02 ansible_ssh_host=172.12.8.102
 core-03 ansible_ssh_host=172.12.8.103
-core-04 ansible_ssh_host=172.12.8.104
+localhost ansible_connection=local
 
-[leader]
-core-01
+[db]
+localhost
 
-[all]
-core-01
-core-02
-core-03
-core-04
+[coreos]
+core-[01:03]
 
-
-[servers]
-core-02
-core-03
-core-04
-
-[load_balancers]
-core-01
-
-[all:vars]
+[coreos:vars]
 ansible_python_interpreter="PATH=/home/core/bin:$PATH python"
+docker_registry_host=tcp://192.168.59.103:2376

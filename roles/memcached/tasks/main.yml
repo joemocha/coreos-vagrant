@@ -2,11 +2,11 @@
 - name: Pull memcached container
   raw: docker pull tutum/memcached
 
-- name: Create memcached.service unit
-  template: src=memcached.service.j2 dest={{ service_path }}/memcached@.service owner=root
+- name: is memcached running
+  raw: "docker ps | grep tutum/memcached"
+  ignore_errors: True
+  register: memcached_is_running
 
-- name: Create memcached discovery unit
-  template: src=memcached-discovery.service.j2 dest={{ service_path }}/memcached-discovery@.service owner=root
-
-- name: Submit memcached services
-  raw: fleetctl submit {{ service_path }}/memcached@.service {{ service_path }}/memcached-discovery@.service
+- name: start memcached container
+  raw: "docker run -d -e MEMCACHED_PASS={{ memcached.password }} -p 11211:11211 --name cache tutum/memcached"
+  when: memcached_is_running|failed

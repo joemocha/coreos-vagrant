@@ -1,5 +1,5 @@
 - name: Reset server services
-  hosts: leader
+  hosts: coreos
   sudo: true
   roles:
     - common

@@ -21,5 +21,5 @@ ExecStart=/bin/bash -c '\
 ExecStop=/usr/bin/etcdctl rm /services/api/${COREOS_PRIVATE_IPV4}
 
 [X-Fleet]
-X-ConditionMachineOf=api@%i.service
+Global=true
 

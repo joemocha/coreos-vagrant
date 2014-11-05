@@ -1,22 +1,20 @@
 ---
 service_path: /tmp/services
 service_templates:
-  - redis@
-  - redis-discovery@
-  - memcached@
-  - memcached-discovery@
-  - postgresql@
-  - postgresql-discovery@
+  - app@
+  - app-discovery@
   - api@
   - api-discovery@
 services:
-  - redis@6379
-  - redis-discovery@6379
-  - memcached@11211
-  - memcached-discovery@11211
-  - postgresql@5432
-  - postgresql-discovery@5432
-  - api@8080
-  - api-discovery@8080
-  - nginx
-  - nginx-discovery
+  - api@80
+  - api-discovery@80
+  - app@8080
+  - app-discovery@8080
+memcached:
+  password: "{{ lookup('password', '/tmp/memcached chars=ascii_letters,digits,hexdigits length=24') }}"
+postgresql:
+  db: atp
+  user: atp
+  password: "{{ lookup('password', '/tmp/postgresql chars=ascii_letters,digits,hexdigits length=24') }}"
+nginx:
+  directory: /Users/sam/workspace/atp/nginx

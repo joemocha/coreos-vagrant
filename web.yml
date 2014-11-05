@@ -1,6 +1,8 @@
 - name: Load Balancer
-  hosts: all
-  sudo: true
+  hosts: localhost
   roles:
     - common
     - nginx
+  vars:
+    load_balancer: 192.168.59.103
+

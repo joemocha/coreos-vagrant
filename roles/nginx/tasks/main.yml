@@ -1,12 +1,13 @@
 ---
-- name: Pull nginx container
-  raw: cd share/nginx && docker build -t joemocha/load_balancer .
+- name: Load Balancer running?
+  raw: "docker ps | grep load_balancer"
+  ignore_errors: True
+  register: nginx_is_running
 
-- name: Create nginx.service file
-  template: src=nginx.service.j2 dest={{ service_path }}/nginx.service owner=root
+- name: Build nginx image
+  raw: cd {{ nginx.directory}} && docker build -t joemocha/load_balancer .
+  when: nginx_is_running|failed
 
-- name: Create nginx discovery unit
-  template: src=nginx-discovery.service.j2 dest={{ service_path }}/nginx-discovery.service owner=root
-
-- name: Submit nginx services
-  raw: fleetctl submit {{ service_path }}/nginx.service {{ service_path }}/nginx-discovery.service
+- name: Start Load Balancer
+  raw: docker run -d --name lb -p 80:80 -e ETCD=172.12.8.101:4001 -e HOST_IP={{ load_balancer }} joemocha/load_balancer
+  when: nginx_is_running|failed

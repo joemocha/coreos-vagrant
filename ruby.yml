@@ -1,6 +1,8 @@
 - name: Ruby
-  hosts: all
+  hosts: coreos
   sudo: true
+  roles:
+    - common
   tasks:
     - name: build ruby containers
-      raw: "cd /home/core/share/ruby && ./bin/docker/build.sh"
+      raw: cd /home/core/share/ruby && ./bin/docker/build.sh

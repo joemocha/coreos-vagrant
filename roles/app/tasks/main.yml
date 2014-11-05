@@ -1,9 +1,15 @@
 ---
 - name: Build app container
-  docker_image: path="/home/core/share/app" name="joemocha/app" state=present
+  docker_image:
+    path="/home/core/share/app"
+    name="joemocha/app"
+    state=present
 
-- name: Create app service file
+- name: Create app discovery service
+  template: src=app-discovery.service.j2 dest={{ service_path }}/app-discovery@.service owner=root
+
+- name: Create app.service file
   template: src=app.service.j2 dest={{ service_path }}/app@.service owner=root
 
-# - name: Submit app services
-  # raw: fleetctl submit {{ service_path }}/app@.service {{ service_path }}/app-discovery@.service
+- name: Submit app services
+  raw: fleetctl submit {{ service_path }}/app@.service {{ service_path }}/app-discovery@.service

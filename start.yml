@@ -1,5 +1,5 @@
 - name: Services
-  hosts: leader
+  hosts: core-01
   sudo: true
   roles:
     - common

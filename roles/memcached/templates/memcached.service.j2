@@ -14,9 +14,7 @@ ExecStart=/usr/bin/docker run --rm \
   -p ${COREOS_PRIVATE_IPV4}:11211:11211 \
   --name memcached-server \
   tutum/memcached
-ExecStartPost=/usr/bin/etcdctl set /memcached-password ${MEMCACHED_PASS}
 ExecStop=/usr/bin/docker stop memcached-server
-ExecStopPost=/usr/bin/etcdctl rm /memcached-password
 
 [Install]
 WantedBy=multi-user.target
