@@ -1,4 +1,5 @@
 ---
+env: development
 service_path: /tmp/services
 service_templates:
   - app@
