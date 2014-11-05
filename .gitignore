@@ -3,3 +3,6 @@ log/
 user-data
 config.rb
 share/
+staging.yml
+production.yml
+development.yml
