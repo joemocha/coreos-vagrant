@@ -3,7 +3,6 @@ Description=API running on Port %i
 Requires=docker.service
 
 Before=api-discovery@%i.service
-After=etcd.service
 After=docker.service
 
 [Service]

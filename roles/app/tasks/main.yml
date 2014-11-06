@@ -6,10 +6,10 @@
     state=present
 
 - name: Create app discovery service
-  template: src=app-discovery.service.j2 dest={{ service_path }}/app-discovery@.service owner=root
+  template: src=app-discovery.{{ env }}.service.j2 dest={{ service_path }}/app-discovery@.service owner=root
 
 - name: Create app.service file
-  template: src=app.service.j2 dest={{ service_path }}/app@.service owner=root
+  template: src=app.{{ env }}.service.j2 dest={{ service_path }}/app@.service owner=root
 
 - name: Submit app services
-  raw: fleetctl submit {{ service_path }}/app@.service {{ service_path }}/app-discovery@.service
+  raw: fleetctl submit {{ service_path }}/app@.service {{service_path }}/app-discovery@.service
