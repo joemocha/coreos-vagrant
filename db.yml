@@ -1,5 +1,7 @@
 - name: Database
   hosts: localhost
+  tags:
+    - db
   roles:
     - common
     - memcached

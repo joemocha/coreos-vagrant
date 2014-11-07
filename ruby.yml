@@ -3,6 +3,14 @@
   sudo: true
   roles:
     - common
+  tags:
+    - ruby
   tasks:
+    - name: Fetch ruby script from github
+      git:
+        repo=https://github.com/fcgmedia/ruby_dockerfiles.git
+        accept_hostkey=yes
+        dest=/home/core/share/ruby
+      when: env != "development"
     - name: build ruby containers
       raw: cd /home/core/share/ruby && ./bin/docker/build.sh

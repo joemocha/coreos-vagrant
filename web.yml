@@ -1,5 +1,7 @@
 - name: Load Balancer
   hosts: localhost
+  tags:
+    - lb
   roles:
     - common
     - nginx

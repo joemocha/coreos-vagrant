@@ -1,9 +1,19 @@
 ---
-- name: Build api container
+- name: fetch API repo
+  git:
+    repo=https://github.com/fcgmedia/atp-api.git
+    accept_hostkey=yes
+    key_file=~/.ssh/akuja-keypair
+    dest=/home/core/share/api
+  when: env != "development"
+
+- name: Build api container (development)
   docker_image:
     path="/home/core/share/api"
     name="joemocha/api"
     state=present
+  when: env == "development"
+
 
 - name: Create api discovery service
   template: src=api-discovery.{{ env }}.service.j2 dest={{ service_path }}/api-discovery@.service owner=root

@@ -13,6 +13,8 @@ ExecStartPre=-/usr/bin/docker kill api.%i
 ExecStartPre=-/usr/bin/docker rm api.%i
 ExecStart=/usr/bin/docker run --rm \
   -e HOST_IP=${COREOS_PRIVATE_IPV4} \
+  -e RACK_ENV={{ env }} \
+  -v /home/core/share/api:/app \
   -p ${COREOS_PRIVATE_IPV4}:%i:8080 \
   --name api.%i \
   joemocha/api

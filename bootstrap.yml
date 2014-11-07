@@ -1,5 +1,7 @@
 - hosts: coreos
   gather_facts: False
+  tags:
+    - bootstrap
   roles:
     - defunctzombie.coreos-bootstrap
   tasks:
