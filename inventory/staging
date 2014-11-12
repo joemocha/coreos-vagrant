@@ -1,0 +1,14 @@
+## inventory file for vagrant machines
+core-01 ansible_ssh_host=ip-10-9-1-163.ec2.internal
+core-02 ansible_ssh_host=ip-10-9-1-164.ec2.internal
+core-03 ansible_ssh_host=ip-10-9-1-165.ec2.internal
+
+[db]
+localhost
+
+[coreos]
+core-[01:03]
+
+[coreos:vars]
+ansible_python_interpreter="PATH=/home/core/bin:$PATH python"
+env=staging

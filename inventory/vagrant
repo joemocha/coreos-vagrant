@@ -14,3 +14,4 @@ core-[01:03]
 [coreos:vars]
 ansible_python_interpreter="PATH=/home/core/bin:$PATH python"
 docker_registry_host=tcp://192.168.59.103:2376
+env=development
