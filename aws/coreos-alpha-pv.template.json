@@ -56,7 +56,6 @@
       "Type": "String"
     },
     "DiscoveryURL": {
-      "Default": "https://discovery.etcd.io/e3e5df1ce9e8d87d5b867afd29bc9527",
       "Description": "An unique etcd cluster discovery URL. Grab a new token from https://discovery.etcd.io/new",
       "Type": "String"
     },
@@ -79,16 +78,6 @@
     }
   },
   "Resources": {
-    "CoreOSSecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "GroupDescription": "CoreOS SecurityGroup",
-        "VpcId": {"Ref": "VPC"},
-        "SecurityGroupIngress": [
-          {"IpProtocol": "tcp", "FromPort": "22", "ToPort": "22", "CidrIp": "10.9.0.1/32" }
-        ]
-      }
-    },
     "SGEtcd": {
       "Type": "AWS::EC2::SecurityGroup",
       "DependsOn": "VPC",
@@ -120,7 +109,7 @@
         "GroupDescription": "SG for Private instances to tunnel via Bastion host to internet",
         "VpcId": {"Ref": "VPC"},
         "SecurityGroupEgress": [ 
-          { "IpProtocol": "tcp", "FromPort": "80", "ToPort": "443", "CidrIp": "10.9.0.0/24" }
+          { "IpProtocol": "tcp", "FromPort": "0", "ToPort": "65535", "CidrIp": "10.9.0.0/24" }
         ]
       }
     },
@@ -157,7 +146,7 @@
         "GroupDescription": "SG to Bastion to the internet",
         "VpcId": {"Ref": "VPC"},
         "SecurityGroupIngress": [ 
-          { "IpProtocol": "tcp", "FromPort": "80", "ToPort": "443", "CidrIp": "0.0.0.0/0" }
+          { "IpProtocol": "tcp", "FromPort": "0", "ToPort": "65535", "CidrIp": "0.0.0.0/0" }
         ],
         "SecurityGroupEgress": [ 
           { "IpProtocol": "tcp", "FromPort": "0", "ToPort": "65535", "CidrIp": "0.0.0.0/0" }
@@ -336,6 +325,7 @@
         "AvailabilityZones": [ {"Ref": "MyAvailabilityZone"} ],
         "VPCZoneIdentifier": [ { "Ref": "PrivateSubnet" }],
         "Tags": [
+          {"Key": "coreos", "Value": "true", "PropagateAtLaunch": true },
           {"Key": "Name", "Value": { "Ref": "AWS::StackName" }, "PropagateAtLaunch": true}
         ]
       }
@@ -348,8 +338,7 @@
         "KeyName": {"Ref": "KeyPair"},
         "SecurityGroups": [
           {"Ref": "SGPing"},
-          {"Ref": "SGEtcd"},
-          {"Ref": "CoreOSSecurityGroup"}
+          {"Ref": "SGEtcd"}
         ],
         "UserData": { "Fn::Base64":
           { "Fn::Join": [ "", [
