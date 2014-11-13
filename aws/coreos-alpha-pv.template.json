@@ -71,13 +71,100 @@
       "ConstraintDescription": "must be a valid EC2 availability zone for the selected Virtual Private Cloud",
       "Default": "us-east-1e"
     },
+    "SecurityGroup": {
+      "Description": "Security group for tying all instances by environment",
+      "Type": "String",
+      "AllowedValues": [
+        "atp-staging",
+        "atp-production",
+        "atp-development",
+        "atp-test"
+      ],
+      "Default": "atp-staging"
+    },
     "KeyPair": {
       "Description": "The name of an EC2 Key Pair to allow SSH access to the instance.",
       "Type": "String",
       "Default": "akuja-keypair"
+    },
+    "Environment": {
+      "Description": "The environment name",
+      "Type": "String",
+      "AllowedValues": [
+        "staging",
+        "production",
+        "development",
+        "test"
+      ],
+      "Default": "staging"
     }
   },
   "Resources": {
+    "SGInstanceCluster": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "DependsOn": "VPC",
+      "Properties": {
+        "GroupDescription": "SG for Instances",
+        "VpcId": {"Ref": "VPC"}
+      }
+    },
+    "SGMemcachedCluster": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "DependsOn": "VPC",
+      "Properties": {
+        "VpcId": {"Ref": "VPC"},
+        "GroupDescription": "MemcachedCluster Security Group",
+        "SecurityGroupIngress": [ { 
+          "IpProtocol": "tcp", 
+          "FromPort": "11211", 
+          "ToPort": "11211",
+          "SourceSecurityGroupId": {"Fn::GetAtt": ["SGInstanceCluster", "GroupId"] }
+        } ]
+      }
+    },
+    "SGRedisCluster": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "DependsOn": "VPC",
+      "Properties": {
+        "VpcId": {"Ref": "VPC"},
+        "GroupDescription": "Redis Cluster Security Group",
+        "SecurityGroupIngress": [ { 
+          "IpProtocol": "tcp", 
+          "FromPort": "6379",
+          "ToPort": "6379",
+          "SourceSecurityGroupId": {"Fn::GetAtt": ["SGInstanceCluster", "GroupId"] }
+        } ]
+      }
+    },
+    "RedisCluster": {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Properties": {
+        "AutoMinorVersionUpgrade": "true",
+        "Engine": "redis",
+        "CacheNodeType": "cache.t1.micro",
+        "CacheSubnetGroupName": { "Ref": "ElasticCacheSubnetGroup" },
+        "NumCacheNodes": "1",
+        "VpcSecurityGroupIds": [{"Fn::GetAtt": [ "SGRedisCluster", "GroupId"]}]
+      }
+    },
+    "MemcachedCluster": {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Properties": {
+        "AutoMinorVersionUpgrade": "true",
+        "Engine": "memcached",
+        "CacheNodeType": "cache.t1.micro",
+        "CacheSubnetGroupName": { "Ref": "ElasticCacheSubnetGroup" },
+        "NumCacheNodes": "1",
+        "VpcSecurityGroupIds": [{"Fn::GetAtt": [ "SGMemcachedCluster", "GroupId"]}]
+      }
+    },
+    "ElasticCacheSubnetGroup" : {
+      "Type" : "AWS::ElastiCache::SubnetGroup",
+      "Properties" : {
+        "Description" : "Cache Subnet Group",
+        "SubnetIds" : [ { "Ref" : "PrivateSubnet" }, { "Ref" : "PublicSubnet" } ]
+      }
+    },
     "SGEtcd": {
       "Type": "AWS::EC2::SecurityGroup",
       "DependsOn": "VPC",
@@ -338,7 +425,8 @@
         "KeyName": {"Ref": "KeyPair"},
         "SecurityGroups": [
           {"Ref": "SGPing"},
-          {"Ref": "SGEtcd"}
+          {"Ref": "SGEtcd"},
+          {"Fn::GetAtt": ["SGInstanceCluster", "GroupId"] }
         ],
         "UserData": { "Fn::Base64":
           { "Fn::Join": [ "", [
@@ -360,6 +448,10 @@
     }
   },
   "Outputs": {
+    "MemcachedURL": {
+      "Description": "Memcached URL",
+      "Value":  { "Fn::Join": [ "", [ "http://", { "Fn::GetAtt": [ "MemcachedCluster", "ConfigurationEndpoint.Address" ] }, ":" ,{ "Fn::GetAtt": [ "MemcachedCluster", "ConfigurationEndpoint.Port" ] } ]]}
+    },
     "URL": {
       "Description": "URL of the website",
       "Value":  { "Fn::Join": [ "", [ "http://", { "Fn::GetAtt": [ "ELB", "DNSName" ]}]]}
